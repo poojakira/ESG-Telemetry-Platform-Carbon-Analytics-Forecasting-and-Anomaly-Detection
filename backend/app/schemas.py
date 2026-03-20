@@ -1,7 +1,12 @@
 from pydantic import BaseModel, ConfigDict
+from typing import Optional
 
 # INPUT: Data sent TO the API
 class CarbonDataInput(BaseModel):
+    sku_name: str
+    category: str
+    region: str
+    vendor: str
     raw_material_energy: float
     raw_material_emission_factor: float
     raw_material_waste: float
@@ -21,7 +26,6 @@ class CarbonDataInput(BaseModel):
     policy_action_score: float
     optimization_reward_signal: float
 
-    # Fix for "protected_namespaces" warning
     model_config = ConfigDict(protected_namespaces=())
 
 # OUTPUT: Data sent FROM the API
@@ -48,6 +52,7 @@ class IngestionResponse(BaseModel):
     records_added: int
     data_hash: str
     audit_id: str
+    verification_chain: str
 
 class ForecastOutput(BaseModel):
     period: str
@@ -55,6 +60,7 @@ class ForecastOutput(BaseModel):
     optimistic_projection: list[float]
     pessimistic_projection: list[float]
     confidence_score: float
+    methodology: str
 
 class TrendOutput(BaseModel):
     category_trends: dict
