@@ -65,25 +65,29 @@ High-level flow from user and data to insights:
 5. **Users & Stakeholders**  
    - Sustainability teams, operations engineers, and leadership use the dashboard to make data-driven decisions and track progress toward sustainability goals.
 
-### DFD-style textual diagram
+### System Architecture & Data Flow
 
-```text
-[Data Sources]
-      |
-      v
-[Backend Ingestion & ML Training]
-      |
-      v
-[FastAPI API Layer] <-----> [Model Artifacts]
-      |
-      v
-[Streamlit Dashboard]
-      |
-      v
-[End Users / Stakeholders]
+The following Mermaid diagram illustrates how data flows through the EcoTrack-Enterprise system:
+
+```mermaid
+flowchart TD
+    A[Enterprise Data Sources] -->|Operational & Sustainability Data| B(Backend Data Ingestion)
+    B --> C{FastAPI Application}
+    C -->|Process & Store| D[Database / Storage]
+    D --> E[ML Training Pipeline]
+    E -->|train.py| F[(Trained Models)]
+    F -->|Forecasts & Predictions| C
+    C -->|REST API Endpoints| G[/health, /metrics, /forecast/]
+    G --> H[Streamlit Dashboard]
+    H -->|Interactive Charts & KPIs| I[End Users]
+    I -->|Filters & Queries| H
+    
+    style A fill:#e1f5ff
+    style C fill:#fff4e1
+    style F fill:#ffe1f5
+    style H fill:#e1ffe1
+    style I fill:#f5e1ff
 ```
-
-You can later replace this with a Mermaid diagram or image if you want, but this version is GitHub-friendly and keeps the flow **clear**.
 
 ## Quick Start (Local)
 
