@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: eco_backend_v4
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      # Map the code so you can edit while running
+      - ./backend:/app
+      # Map the data folder so both containers see the CSV and Models
+      - ./backend/data:/app/data
+    ports:
+      - "8000:8000"
+    environment:
+      - DATA_PATH=/app/data/data_dpp.csv
+      - MODEL_PATH=/app/data/model.pkl
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: eco_frontend_v4
+    # Wait for backend to be ready before starting
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - ./backend/data:/app/data
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000
+    restart: always
+
+# Optional: Define a shared network
+networks:
+  default:
+    driver: bridge
