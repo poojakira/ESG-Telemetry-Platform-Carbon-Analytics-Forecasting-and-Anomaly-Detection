@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from app.config import settings
 
-DB_PATH = os.path.join(os.path.dirname(settings.DATA_PATH), "sustainability.db")
+DB_PATH = os.path.join(os.path.dirname(settings.DATA_PATH), "v7_sustainability.db")
 
 def init_db():
     """ Initializes the local SQLite persistence layer.
@@ -24,7 +24,7 @@ def init_db():
             category TEXT,
             region TEXT,
             vendor TEXT,
-            carbon_footprint REAL,
+            total_lifecycle_carbon_footprint REAL,
             hash TEXT,
             prev_hash TEXT,
             is_anomaly INTEGER DEFAULT 0
@@ -35,8 +35,11 @@ def init_db():
     cursor.execute("SELECT count(*) FROM ledger")
     if cursor.fetchone()[0] == 0 and os.path.exists(settings.DATA_PATH):
         df = pd.read_csv(settings.DATA_PATH)
-        df_seed = df[['Timestamp', 'Product_ID', 'SKU_Name', 'Category', 'Region', 'Vendor', 'total_lifecycle_carbon_footprint', 'Hash', 'Prev_Hash']]
-        df_seed.columns = ['timestamp', 'product_id', 'sku_name', 'category', 'region', 'vendor', 'carbon_footprint', 'hash', 'prev_hash']
+        # Dynamic discovery of carbon footprint column
+        carbon_col = next((c for c in df.columns if "total_lifecycle_carbon_footprint" in c), 'total_lifecycle_carbon_footprint')
+        
+        df_seed = df[['Timestamp', 'Product_ID', 'SKU_Name', 'Category', 'Region', 'Vendor', carbon_col, 'Hash', 'Prev_Hash']]
+        df_seed.columns = ['timestamp', 'product_id', 'sku_name', 'category', 'region', 'vendor', 'total_lifecycle_carbon_footprint', 'hash', 'prev_hash']
         df_seed.to_sql('ledger', conn, if_exists='append', index=False)
         print(f"📦 Database seeded with {len(df_seed)} records from CSV.")
     
@@ -63,12 +66,13 @@ def add_ledger_record(record_dict):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO ledger (timestamp, product_id, sku_name, category, region, vendor, carbon_footprint, hash, prev_hash, is_anomaly)
+        INSERT INTO ledger (timestamp, product_id, sku_name, category, region, vendor, total_lifecycle_carbon_footprint, hash, prev_hash, is_anomaly)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         record_dict['timestamp'], record_dict['product_id'], record_dict['sku_name'],
         record_dict['category'], record_dict['region'], record_dict['vendor'],
-        record_dict['carbon_footprint'], record_dict['hash'], record_dict['prev_hash'],
+        record_dict.get('total_lifecycle_carbon_footprint', record_dict.get('carbon_footprint')), 
+        record_dict['hash'], record_dict['prev_hash'],
         record_dict.get('is_anomaly', 0)
     ))
     conn.commit()
