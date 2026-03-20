@@ -73,10 +73,21 @@ def health_check():
     }
 
 @app.get("/api/v1/metrics", response_model=SustainabilityMetrics)
-def get_enterprise_metrics():
+def get_enterprise_metrics(limit: int = 200, offset: int = 0):
+    """ Retrieves aggregated executive-level sustainability metrics.
+    
+    Args:
+        limit (int): Number of records to scan for aggregation. Defaults to 200.
+        offset (int): Offset for the data scan.
+        
+    Returns:
+        SustainabilityMetrics: Aggregated CO2, intensity, and compliance data.
+    """
     try:
         conn = get_db_connection()
-        df = pd.read_sql_query("SELECT * FROM ledger", conn)
+        # Implementing Paginated Aggregation for industrial scale
+        query = f"SELECT * FROM ledger ORDER BY id DESC LIMIT ? OFFSET ?"
+        df = pd.read_sql_query(query, conn, params=(limit, offset))
         conn.close()
         
         if df.empty:
@@ -89,7 +100,7 @@ def get_enterprise_metrics():
         return {
             "total_co2": round(total_co2, 2),
             "avg_intensity": round(avg_intensity, 2),
-            "renewable_mix": 42.8, # Based on Ghent/Scandinavian Hub availability
+            "renewable_mix": 42.8, 
             "active_nodes": len(df),
             "compliance_score": "AAA",
             "region_breakdown": regions,
@@ -189,15 +200,57 @@ def get_sustainability_forecast():
 
 @app.get("/api/v1/analytics/trends", response_model=TrendOutput)
 def get_performance_trends():
+    """ Analyzes categorical and vendor performance trends from the ledger.
+    
+    Returns:
+        TrendOutput: Categorical distribution and Top Vendor performance indices.
+    """
     conn = get_db_connection()
-    df = pd.read_sql_query("SELECT category, region FROM ledger", conn)
+    # FIX: Corrected query to pull VENDOR for vendor_performance metric
+    df = pd.read_sql_query("SELECT category, vendor FROM ledger", conn)
     conn.close()
     
     return {
         "category_trends": df['category'].value_counts().head(3).to_dict(),
-        "vendor_performance": df['region'].value_counts().head(3).to_dict(),
+        "vendor_performance": df['vendor'].value_counts().head(3).to_dict(),
         "yoy_change": -3.42
     }
+
+from fastapi.responses import StreamingResponse
+import io
+
+@app.get("/api/v1/export")
+def export_ledger_data(format: str = "csv"):
+    """ Exports the entire sustainability ledger for external auditing.
+    
+    Args:
+        format (str): Export format ('csv' or 'json'). Defaults to 'csv'.
+        
+    Returns:
+        StreamingResponse: A downloadable stream of the ledger data.
+    """
+    try:
+        conn = get_db_connection()
+        df = pd.read_sql_query("SELECT * FROM ledger", conn)
+        conn.close()
+        
+        if format.lower() == "json":
+            content = df.to_json(orient="records")
+            media_type = "application/json"
+            filename = "sustainability_export.json"
+        else:
+            content = df.to_csv(index=False)
+            media_type = "text/csv"
+            filename = "sustainability_export.csv"
+            
+        return StreamingResponse(
+            io.StringIO(content),
+            media_type=media_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        logger.error(f"Export Engine Failure: {e}")
+        raise HTTPException(status_code=500, detail="Data export failed")
 
 @app.post("/predict", response_model=PredictionOutput)
 def predict_carbon_footprint(data: CarbonDataInput):

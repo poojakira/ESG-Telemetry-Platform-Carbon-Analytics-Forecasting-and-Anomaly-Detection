@@ -6,6 +6,11 @@ from app.config import settings
 DB_PATH = os.path.join(os.path.dirname(settings.DATA_PATH), "sustainability.db")
 
 def init_db():
+    """ Initializes the local SQLite persistence layer.
+    
+    Creates the 'ledger' table if it does not exist and seeds it with 
+    historical data from the Absolute Reality CSV registry if empty.
+    """
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
@@ -39,11 +44,22 @@ def init_db():
     conn.close()
 
 def get_db_connection():
+    """ Establishes a connection to the SQLite sustainability database.
+    
+    Returns:
+        sqlite3.Connection: A connection object with Row factory enabled for dictionary-like access.
+    """
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 def add_ledger_record(record_dict):
+    """ Persists a new sustainability record to the immutable ledger.
+    
+    Args:
+        record_dict (dict): A dictionary containing SKU telemetry, metrics, 
+                           and SHA-256 hash-chain metadata.
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
