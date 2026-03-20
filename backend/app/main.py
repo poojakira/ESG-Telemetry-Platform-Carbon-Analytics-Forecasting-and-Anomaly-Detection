@@ -1,22 +1,22 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException  # type: ignore
 from contextlib import asynccontextmanager
-import pandas as pd
-import joblib
+import pandas as pd  # type: ignore
+import joblib  # type: ignore
 import logging
 import os
-import numpy as np
+import numpy as np  # type: ignore
 import datetime
 import uuid
 import time
 import hashlib
-from statsmodels.tsa.holtwinters import SimpleExpSmoothing
-from fastapi.responses import StreamingResponse
+from statsmodels.tsa.holtwinters import SimpleExpSmoothing  # type: ignore
+from fastapi.responses import StreamingResponse  # type: ignore
 import io
 import traceback
 
-from app.config import settings
-from app.db import init_db, get_db_connection, add_ledger_record, get_latest_hash
-from app.schemas import (
+from app.config import settings  # type: ignore
+from app.db import init_db, get_db_connection, add_ledger_record, get_latest_hash  # type: ignore
+from app.schemas import (  # type: ignore
     CarbonDataInput, 
     PredictionOutput, 
     SustainabilityMetrics, 
