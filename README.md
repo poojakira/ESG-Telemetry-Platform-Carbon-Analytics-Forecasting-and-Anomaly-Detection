@@ -83,5 +83,5 @@ pytest backend/tests/test_api.py -v
 | `/predict` | `POST` | ML Inference with Deterministic Anomaly Fallback. |
 
 ---
-**Author**: Antigravity Engineering (v7.0.0 Baseline)
+**Author**: Pooja Kiran
 **Status**: 100% PRODUCTION STABLE | ABSOLUTE REALITY CERTIFIED
