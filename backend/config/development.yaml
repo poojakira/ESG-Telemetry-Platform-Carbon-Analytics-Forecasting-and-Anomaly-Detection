@@ -1,0 +1,6 @@
+# Development Overrides
+env: "development"
+database_url: "sqlite:///./ecotrack_dev.db"
+secret_key: "dev_secret_key_99"
+debug: true
+log_level: "DEBUG"

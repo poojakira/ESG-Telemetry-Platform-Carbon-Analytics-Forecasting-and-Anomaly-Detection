@@ -103,6 +103,7 @@ def health_check():
     }
 
 @app.get("/api/v1/metrics", response_model=SustainabilityMetrics)
+@limiter.limit("20/minute")
 def get_enterprise_metrics(
     limit: int = 200, 
     offset: int = 0, 
@@ -139,6 +140,7 @@ def get_enterprise_metrics(
         raise HTTPException(status_code=500, detail=f"Audit engine failure: {str(e)}")
 
 @app.post("/api/v1/data/ingest", status_code=202)
+@limiter.limit("10/minute")
 async def ingest_data(
     data: list[CarbonDataInput], 
     db: Session = Depends(get_db), # Still used for sync overhead/checks if needed

@@ -1,0 +1,7 @@
+# Base Configuration for EcoTrack Industrial Nexus
+project_name: "EcoTrack Enterprise"
+version: "8.5.0-STABLE"
+algorithm: "HS256"
+access_token_expire_minutes: 60
+prometheus_metrics: true
+log_level: "INFO"

@@ -1,34 +1,47 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict # type: ignore
-from typing import Optional
+from typing import Optional, Dict, Any
 import os
+import yaml
 
 class Settings(BaseSettings):
     # Core Infrastructure
     PROJECT_NAME: str = "EcoTrack Enterprise"
-    VERSION: str = "8.2.0-STABLE"
+    VERSION: str = "8.5.0-STABLE"
     ENV: str = os.getenv("ENV", "development")
     
-    # Database (Full PostgreSQL Support)
-    # Default to production-grade DB if ENV=production
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./ecotrack_enterprise.db")
-    
-    # Security (Hardened)
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "industrial_grade_secret_2026")
+    # DATABASE & SECURITY
+    DATABASE_URL: str = "sqlite:///./ecotrack_enterprise.db"
+    SECRET_KEY: str = "industrial_grade_secret_2026"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     
-    # ML & Telemetry Nodes
+    # ML & TELEMETRY
     MODEL_PATH: str = "app/ml/business_intel_v8.joblib"
     SECURITY_PATH: str = "app/ml/security_shield_v8.joblib"
     
-    # Observability
+    # OBSERVABILITY
     LOG_LEVEL: str = "INFO"
     PROMETHEUS_METRICS: bool = True
 
-    model_config = SettingsConfigDict(
-        env_file=f".env.{os.getenv('ENV', 'development')}",
-        env_file_encoding='utf-8',
-        case_sensitive=True
-    )
+    @classmethod
+    def load_from_yaml(cls) -> "Settings":
+        """ Hybrid YAML + ENV loader for industrial deployments. """
+        env = os.getenv("ENV", "development")
+        config_dir = "config"
+        
+        # Load Base
+        with open(os.path.join(config_dir, "base.yaml"), "r") as f:
+             base_cfg = yaml.safe_load(f)
+             
+        # Load Env Overrides
+        env_file = os.path.join(config_dir, f"{env}.yaml")
+        if os.path.exists(env_file):
+            with open(env_file, "r") as f:
+                env_cfg = yaml.safe_load(f)
+                base_cfg.update(env_cfg)
+        
+        # Merge into Settings (ENV vars always win)
+        return cls(**base_cfg)
 
-settings = Settings()
+# Initialize Industrial Settings
+settings = Settings.load_from_yaml()

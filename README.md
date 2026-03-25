@@ -68,6 +68,12 @@ python -m uvicorn app.main:app
 | **Audit Speed (10k rows)** | 5.2s | **0.4s** | **13x Faster** |
 | **Forecast Error (MAE)** | 12.4% | **4.2%** | **66% Accuracy Gain** |
 
+### 📈 Performance Visualizations
+*Run the [Performance Analysis Notebook](./notebooks/performance_analysis.ipynb) to generate real-time metrics for your local cluster.*
+
+![Industrial Performance Plot](https://raw.githubusercontent.com/poojakira/Eco-Enterprise/main/assets/performance_plot.png)
+*(Placeholder: Generate your cluster-specific plot via `notebooks/performance_analysis.ipynb`)*
+
 ### MLOps Drift Detection
 Validated statistical shift detection on carbon intensity distributions across 24-hour cycles.
 
