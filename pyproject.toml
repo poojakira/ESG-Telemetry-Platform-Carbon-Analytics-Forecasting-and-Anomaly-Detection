@@ -4,26 +4,36 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ecotrack-enterprise"
-version = "8.0.0"
-description = "Industrial-grade Sustainability ERP & ML Telemetry Platform"
+version = "8.5.0"
+authors = [
+  { name="EcoTrack Industrial Team", email="engineering@ecotrack.ai" },
+]
+description = "Industrial ESG Telemetry & Cryptographic Ledger Nexus"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
 dependencies = [
     "fastapi",
     "uvicorn",
     "sqlalchemy",
-    "psycopg2-binary",
     "pandas",
     "numpy",
     "xgboost",
     "statsmodels",
     "mlflow",
-    "python-jose[cryptography]",
-    "passlib[bcrypt]",
-    "python-dotenv",
-    "typer",
-    "rich"
+    "pydantic-settings",
+    "slowapi",
+    "pyyaml"
 ]
 
 [project.scripts]
-ecotrack = "backend.cli:app"
+ecotrack = "app.main:app"
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+include = ["app*"]

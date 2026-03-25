@@ -106,5 +106,20 @@ We follow the **NVIDIA-Grade Engineering Standard**. Please review:
 
 ---
 
+## 🛠️ Deep-Dive Engineering Documentation
+
+For industrial-grade deployment and audit, please review the formal specification nexus:
+
+| Domain | Documentation |
+| :--- | :--- |
+| **Operations** | [Observability & Metrics](./docs/OBSERVABILITY.md) |
+| **Reliability** | [Failure-Mode Recovery](./docs/FAILURE_MODES.md) \| [Backup Strategy](./docs/BACKUP_STRATEGY.md) |
+| **Data Engine** | [Dataset Specs](./docs/DATASET.md) \| [Internals & Cryptography](./docs/INTERNALS.md) |
+| **Strategy** | [Scalability & Batching](./SCALING.md) \| [Sustainability Recommender](./docs/RESULTS.md) |
+| **Branding** | [Metadata & GitHub Topics](./BRANDING.md) \| [User Personas](./docs/PERSONAS.md) |
+| **Governance** | [Semantic Releases](./docs/RELEASES.md) \| [Security Specs](./docs/SECURITY_SPECS.md) |
+
+---
+
 ## 📜 License
 Licensed under the MIT License. Built for Absolute Reality.
