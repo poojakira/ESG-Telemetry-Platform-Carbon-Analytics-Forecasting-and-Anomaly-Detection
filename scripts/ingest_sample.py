@@ -11,7 +11,7 @@ def generate_sample_batch(size=50):
     batch = []
     for _ in range(size):
         batch.append({
-            "sku_name": f"SKU-{str(uuid.uuid4())[:6].upper()}",
+            "sku_name": f"SKU-{str(uuid.uuid4()).split('-')[0].upper()}",
             "product_id": f"PRD-{random.randint(100, 999)}",
             "category": random.choice(["Electronics", "HVAC", "Logistics", "Energy"]),
             "vendor": f"Vendor-{random.choice(['Alpha', 'Beta', 'Gamma'])}",
