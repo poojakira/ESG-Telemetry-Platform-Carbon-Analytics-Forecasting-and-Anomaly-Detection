@@ -35,7 +35,7 @@ from app.ingestion_engine import ingestion_engine # type: ignore
 import mlflow  # type: ignore
 
 from app.logging_config import setup_logging # type: ignore
-from app.middleware import setup_middlewares # type: ignore
+from app.middleware import setup_middlewares, limiter # type: ignore
 
 # 1. Setup Logging (Structured JSON)
 setup_logging()
