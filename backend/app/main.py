@@ -28,7 +28,7 @@ from app.schemas import (  # type: ignore
     ForecastOutput, 
     TrendOutput
 )
-from app.api.v1 import auth, ledger # type: ignore
+from app.api.v1 import auth, ledger, recommendations # type: ignore
 from app.ml_engine import MLEngine, get_forecast_ensemble as ensemble_fc  # type: ignore
 from app.ml_ops import DataValidator, DriftDetector, RetrainingManager # type: ignore
 from app.ingestion_engine import ingestion_engine # type: ignore
@@ -92,6 +92,7 @@ setup_middlewares(app)
 # Include Routers
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(ledger.router, prefix="/api/v1")
+app.include_router(recommendations.router, prefix="/api/v1")
 
 @app.get("/health")
 def health_check():

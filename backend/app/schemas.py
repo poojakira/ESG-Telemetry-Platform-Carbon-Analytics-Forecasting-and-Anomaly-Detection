@@ -84,6 +84,20 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
+# SUSTAINABILITY ACTIONS
+class RecommendationAction(BaseModel):
+    id: str
+    action: str
+    impact_score: float  # 0 to 1
+    savings_est_kg: float
+    complexity: str  # "Low", "Medium", "High"
+    category: str
+
+class RecommendationOutput(BaseModel):
+    recommendations: list[RecommendationAction]
+    overall_sustainability_index: float
+    timestamp: str
+
 class UserLogin(BaseModel):
     username: str
     password: str

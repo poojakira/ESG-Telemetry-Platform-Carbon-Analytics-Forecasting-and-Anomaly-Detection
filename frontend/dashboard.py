@@ -152,16 +152,17 @@ def fetch_api_data(token):
         trends = requests.get(f"{BACKEND_URL}/api/v1/analytics/trends", headers=headers, timeout=5).json()
         # 3. Fetch Audit Logs
         audit = requests.get(f"{BACKEND_URL}/api/v1/ledger/audit-log", headers=headers, timeout=5).json()
-        # 4. Fetch Ledger for Charts
-        ledger = requests.get(f"{BACKEND_URL}/api/v1/export?format=csv", headers=headers, timeout=10).text
+        # 5. Fetch Recommendations
+        recs = requests.get(f"{BACKEND_URL}/api/v1/recommendations", headers=headers, timeout=5).json()
+        
         from io import StringIO
         df = pd.read_csv(StringIO(ledger))
-        return df, metrics, trends, audit
+        return df, metrics, trends, audit, recs
     except Exception as e:
         st.error(f"⚠️ Telemetry Node Synchronization Failure: {e}")
-        return pd.DataFrame(), None, None, []
+        return pd.DataFrame(), None, None, [], None
 
-df, api_metrics, api_trends, api_audit = fetch_api_data(st.session_state.token)
+df, api_metrics, api_trends, api_audit, api_recs = fetch_api_data(st.session_state.token)
 
 # --- 5. TOP TICKER ---
 st.markdown(f"""
@@ -184,7 +185,7 @@ with c2:
         st.rerun()
 
 # --- 7. TABS ---
-t1, t2, t3, t4 = st.tabs(["📊 Executive Command", "⛓️ Merkle Ledger", "🛡️ AI Security", "🤖 MLOps Terminal"])
+t1, t2, t3, t4, t5 = st.tabs(["📊 Executive Command", "⛓️ Merkle Ledger", "🛡️ AI Security", "🤖 MLOps Terminal", "💡 Action Center"])
 
 with t1:
     if api_metrics:
@@ -256,6 +257,28 @@ with t4:
         with c2:
             st.markdown("**Category Dynamics**")
             st.json(api_trends['category_trends'])
+
+with t5:
+    st.markdown("### 💡 Sustainability Action Center")
+    if api_recs:
+        st.markdown(f"**Overall Sustainability Index**: `{api_recs['overall_sustainability_index']}/100`")
+        
+        # Action Grid
+        for rec in api_recs['recommendations']:
+            with st.container():
+                c1, c2, c3 = st.columns([3, 1, 1])
+                with c1:
+                    st.markdown(f"**{rec['action']}**")
+                    st.caption(f"Category: {rec['category']} | ID: {rec['id']}")
+                with c2:
+                    st.markdown(f"Impact: **{int(rec['impact_score']*100)}%**")
+                    st.progress(rec['impact_score'])
+                with c3:
+                    st.markdown(f"Est. Savings: **{rec['savings_est_kg']} kg**")
+                    st.markdown(f"<span class='status-badge'>{rec['complexity']} Complexity</span>", unsafe_allow_html=True)
+                st.divider()
+    else:
+        st.warning("Insufficient telemetry for optimization analysis.")
 
 st.sidebar.divider()
 st.sidebar.markdown("""
