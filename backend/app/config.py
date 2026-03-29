@@ -4,6 +4,7 @@ import os
 import yaml
 
 class Settings(BaseSettings):
+        model_config = SettingsConfigDict(extra='ignore', env_prefix='', case_sensitive=False)
     # Core Infrastructure
     PROJECT_NAME: str = "EcoTrack Enterprise"
     VERSION: str = "8.5.0-STABLE"
