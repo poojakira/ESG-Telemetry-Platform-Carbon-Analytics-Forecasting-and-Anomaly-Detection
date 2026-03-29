@@ -52,7 +52,7 @@ class DriftDetector:
                 f"DRIFT DETECTED: mean shift {mean1:.2f} -> {mean2:.2f} "
                 f"(relative: {relative_shift:.2f})"
             )
-        return drift
+                return bool(drift)
 
     def check_drift(self, current_data: pd.DataFrame) -> bool:
         """
