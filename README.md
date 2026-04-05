@@ -92,12 +92,12 @@ For a technical review of the patterns used, explore the documentation library:
 
 | Domain | Formal Specification |
 | :--- | :--- |
-| **Operations** | [CI/CD & GitHub Actions](./.github/workflows/ci.yml) \| [Observability & Metrics](./docs/OBSERVABILITY.md) |
+| **Operations** | [CI/CD & GitHub Actions](./.github/workflows/ci.yml) \| [Issue & PR Templates](./.github/) \| [Observability](./docs/OBSERVABILITY.md) |
 | **Reliability** | [Failure-Mode Recovery](./docs/FAILURE_MODES.md) \| [Backup Strategy](./docs/BACKUP_STRATEGY.md) |
-| **Technical** | [Internals & Cryptography](./docs/INTERNALS.md) \| [ESG Dataset Schema](./docs/DATASET.md) |
+| **Technical** | [Internals & Cryptography](./docs/INTERNALS.md) \| [.editorconfig](./.editorconfig) \| [ESG Schema](./docs/DATASET.md) |
 | **Strategy** | [Scalability & Scaling](./SCALING.md) \| [User Personas & Workflows](./docs/PERSONAS.md) |
-| **Governance** | [Semantic Releases](./docs/RELEASES.md) \| [Security Specs](./docs/SECURITY_SPECS.md) |
-| **Experiments** | [Performance Analysis Notebook](./notebooks/performance_analysis.ipynb) \| [Full Metrics Report](./docs/RESULTS.md) |
+| **Governance** | [Changelog](./CHANGELOG.md) \| [Updates](./docs/RELEASES.md) \| [Security Specs](./docs/SECURITY_SPECS.md) |
+| **Experiments** | [Performance Notebook](./notebooks/performance_analysis.ipynb) \| [Full Metrics Report](./docs/RESULTS.md) |
 
 ---
 
